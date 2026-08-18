@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "tailwindcss/typography";
+
+/* ------------------------------------------------------------------ */
+/* Scriptorium palette — ink (dark bg) / parchment (text) / ember (accent) */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-ink-950: #0d1014;
+  --color-ink-900: #12161c;
+  --color-ink-800: #1a2028;
+  --color-ink-700: #242d38;
+  --color-ink-600: #324050;
+  --color-ink-500: #46586c;
+
+  --color-parchment: #e8e2d4;
+  --color-parchment-dim: #b8b2a4;
+  --color-parchment-faint: #8a8578;
+
+  --color-ember-300: #f5c26b;
+  --color-ember-400: #eead3f;
+  --color-ember-500: #d99424;
+  --color-ember-600: #b57618;
+
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+html {
+  scrollbar-color: var(--color-ink-600) var(--color-ink-950);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-ember-400) 35%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Markdown body (server-rendered)                                    */
+/* ------------------------------------------------------------------ */
+.markdown-body {
+  @apply text-parchment/90 leading-relaxed max-w-none;
+}
+.markdown-body > *:first-child { margin-top: 0; }
+.markdown-body h1 { @apply text-3xl font-bold text-parchment mt-8 mb-4 pb-2 border-b border-ink-700; }
+.markdown-body h2 { @apply text-2xl font-semibold text-parchment mt-8 mb-3; }
+.markdown-body h3 { @apply text-xl font-semibold text-parchment mt-6 mb-2; }
+.markdown-body h4 { @apply text-lg font-semibold text-parchment mt-5 mb-2; }
+.markdown-body h5, .markdown-body h6 { @apply text-base font-semibold text-parchment-dim mt-4 mb-2; }
+.markdown-body p { @apply my-3; }
+.markdown-body a { @apply text-ember-300 underline decoration-ember-600/50 hover:decoration-ember-300; }
+.markdown-body strong { @apply text-parchment; }
+.markdown-body ul { @apply list-disc pl-6 my-3 space-y-1; }
+.markdown-body ol { @apply list-decimal pl-6 my-3 space-y-1; }
+.markdown-body li > ul, .markdown-body li > ol { @apply my-1; }
+.markdown-body blockquote { @apply border-l-4 border-ink-600 pl-4 text-parchment-dim my-4; }
+.markdown-body code {
+  @apply font-mono text-[0.9em] px-1.5 py-0.5 rounded bg-ink-800 text-ember-300;
+}
+.markdown-body pre.code-block {
+  @apply bg-ink-900 border border-ink-700 rounded-lg p-4 my-4 overflow-x-auto;
+}
+.markdown-body pre.code-block code {
+  @apply bg-transparent p-0 text-parchment/85;
+}
+.markdown-body hr { @apply border-ink-700 my-6; }
+.markdown-body table { @apply w-full border-collapse my-4 text-sm; }
+.markdown-body th { @apply text-left bg-ink-800 text-parchment font-semibold px-3 py-2 border border-ink-700; }
+.markdown-body td { @apply px-3 py-2 border border-ink-700; }
+.markdown-body img { @apply rounded-lg my-4 max-w-full; }
+.markdown-body mark { @apply bg-ember-400/25 text-ember-300 px-1 rounded; }
+.markdown-body input[type="checkbox"] { @apply accent-ember-500 mr-1; }
+.markdown-body sup, .markdown-body sub { @apply text-xs text-parchment-faint; }
+.markdown-body .math-block { @apply overflow-x-auto py-2; }
+.katex { font-size: 1.08em; }
+.katex-display { @apply my-3; overflow-x: auto; }
+
+/* Wiki links */
+.wikilink { @apply text-ember-300; }
+.wikilink-broken {
+  @apply text-parchment-faint border-b border-dotted border-parchment-faint no-underline cursor-help;
+}
+
+/* ------------------------------------------------------------------ */
+/* Callouts — the "boxed" notes (Obsidian style)                       */
+/* ------------------------------------------------------------------ */
+.callout {
+  @apply my-4 flex gap-3 rounded-lg border-l-4 border border-ink-700 bg-ink-900/70 px-4 py-3;
+}
+.callout-marker { @apply text-lg leading-6 shrink-0; }
+.callout-body { @apply min-w-0 flex-1; }
+.callout-title { @apply font-semibold text-sm tracking-wide mb-1 uppercase; }
+.callout-body > :first-child { margin-top: 0; }
+.callout-body > :last-child { margin-bottom: 0; }
+
+.callout-note      { border-left-color: #64748b; } .callout-note .callout-title { color: #94a3b8; }
+.callout-info      { border-left-color: #0ea5e9; } .callout-info .callout-title { color: #38bdf8; }
+.callout-tip,
+.callout-success   { border-left-color: #10b981; } .callout-tip .callout-title, .callout-success .callout-title { color: #34d399; }
+.callout-question  { border-left-color: #8b5cf6; } .callout-question .callout-title { color: #a78bfa; }
+.callout-warning   { border-left-color: #f59e0b; background: color-mix(in srgb, #f59e0b 7%, transparent); }
+.callout-warning .callout-title { color: #fbbf24; }
+.callout-caution   { border-left-color: #f97316; background: color-mix(in srgb, #f97316 8%, transparent); }
+.callout-caution .callout-title { color: #fb923c; }
+.callout-failure   { border-left-color: #ef4444; background: color-mix(in srgb, #ef4444 7%, transparent); }
+.callout-failure .callout-title { color: #f87171; }
+.callout-danger    { border-left-color: #dc2626; background: color-mix(in srgb, #dc2626 9%, transparent); }
+.callout-danger .callout-title { color: #f87171; }
+.callout-example   { border-left-color: #06b6d4; } .callout-example .callout-title { color: #22d3ee; }
+.callout-quote     { border-left-color: #78716c; } .callout-quote .callout-title { color: #a8a29e; }
+.callout-abstract  { border-left-color: #e8e2d4; } .callout-abstract .callout-title { color: #e8e2d4; }
+.callout div.callout { @apply my-2; } /* nested callouts */
+
+/* ------------------------------------------------------------------ */
+/* CodeMirror editor chrome                                            */
+/* ------------------------------------------------------------------ */
+.cm-editor { height: 100%; }
+.cm-editor.cm-focused { outline: none; }
+.cm-scroller { font-family: var(--font-mono); font-size: 14px; line-height: 1.6; }
+
+/* Small shared UI */
+.btn { @apply inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed; }
+.btn-primary { @apply btn bg-ember-500 text-ink-950 hover:bg-ember-400; }
+.btn-ghost { @apply btn text-parchment-dim hover:text-parchment hover:bg-ink-800 border border-ink-700; }
+.btn-danger { @apply btn text-red-300 border border-red-900/60 hover:bg-red-950/40; }
+.input {
+  @apply w-full rounded-md bg-ink-900 border border-ink-700 px-3 py-2 text-sm text-parchment
+    placeholder-parchment-faint focus:outline-none focus:border-ember-500/60 focus:ring-1 focus:ring-ember-500/40;
+}
+.card { @apply rounded-xl border border-ink-700 bg-ink-900; }
+.badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider; }
+.badge-public { @apply badge bg-emerald-950/60 text-emerald-400 border border-emerald-900; }
+.badge-private { @apply badge bg-amber-950/60 text-amber-400 border border-amber-900; }
+.badge-admin { @apply badge bg-red-950/60 text-red-400 border border-red-900; }
+.badge-role { @apply badge bg-ink-800 text-parchment-dim border border-ink-600; }

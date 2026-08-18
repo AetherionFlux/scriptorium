@@ -21,15 +21,22 @@
 import { marked } from 'marked';
 import katex from 'katex';
 import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { createRequire } from 'node:module';
 import { sanitizeHtml, escapeHtml } from './sanitize.js';
 
 // ---------------------------------------------------------------------------
 // KaTeX setup
 // ---------------------------------------------------------------------------
 
-const here = dirname(fileURLToPath(import.meta.url));
-const KATEX_CSS = readFileSync(join(here, 'node_modules', 'katex', 'dist', 'katex.min.css'), 'utf8');
+// Resolve katex's dist files via Node's module resolution (works whether npm
+// hoists node_modules to the workspace root or not).
+const _req = createRequire(import.meta.url);
+const KATEX_CSS = readFileSync(_req.resolve('katex/dist/katex.min.css'), 'utf8');
+
+/** Absolute path to a katex dist font (used by the /api/katex/fonts route). */
+export function katexFontPath(name) {
+  return _req.resolve('katex/dist/fonts/' + name);
+}
 
 /** CSS for KaTeX — the frontend inlines it once so math needs no external assets. */
 export function katexCss() {
@@ -100,11 +107,13 @@ export function extractCallouts(md) {
     }
 
     // Strip the `> ` prefix (and one optional space) from each line.
-    const inner = lines
+    // The first line's marker (`> [!type] label`) itself is dropped — the
+    // label is captured separately and rendered as the callout title.
+    const innerLines = lines
       .slice(i, end)
-      .map((ln) => (ln.trim() === '' ? '' : ln.replace(/^(\s*)>\s?/, '$1')))
-      .join('\n')
-      .replace(/^\n+|\n+$/g, '');
+      .map((ln) => (ln.trim() === '' ? '' : ln.replace(/^(\s*)>\s?/, '$1')));
+    innerLines[0] = ''; // marker line -> empty (label handled by the title)
+    const inner = innerLines.join('\n').replace(/^\n+|\n+$/g, '');
 
     blocks.push({ type, label, inner });
     out.push(`\x00CO${blocks.length - 1}\x00`);
@@ -179,7 +188,8 @@ export function convertWikilinks(md, resolve) {
     }
     const r = resolve ? resolve({ spaceSlug, name }) : { slug: null, exists: false };
     const text = label ?? name;
-    const href = r.slug ? (r.spaceSlug ? `/${spaceSlug}/${r.slug}` : `/${r.slug}`) : null;
+    // Local target: slug-only href. Cross-space target: keep the space prefix.
+    const href = r.slug ? (spaceSlug ? `/${spaceSlug}/${r.slug}` : `/${r.slug}`) : null;
     if (href) return `<a class="wikilink" href="${escapeHtml(href)}">${escapeHtml(text)}</a>`;
     return `<a class="wikilink wikilink-broken" title="Page not found" aria-disabled="true">${escapeHtml(text)}</a>`;
   });
@@ -198,10 +208,12 @@ function renderBlock(md, opts) {
   const math = extractMath(code.text);
   const co = extractCallouts(math.text);
 
-  let s = co.text;
+  const spans = extractCodeSpans(co.text);
+  let s = spans.text;
   s = s.replace(/==([^=\n]+?)==/g, '<mark>$1</mark>');
   s = convertWikilinks(s, opts.resolveWikilink);
   let h = marked.parse(s, { gfm: true, breaks: false });
+  h = restoreCodeSpans(h, spans.codes);
 
   // Marked wraps lone placeholder lines in <p>; unwrap so restored blocks
   // (pre/div) sit at the top level instead of producing <p><pre>…</pre></p>.
@@ -211,6 +223,21 @@ function renderBlock(md, opts) {
   h = restoreCode(h, code.codes);
   h = restoreMath(h, math.math);
   return h;
+}
+
+/** Pull inline code spans (`x` / ``x``) into placeholders so inline
+ *  conversions (wikilinks, highlights) never touch their contents. */
+function extractCodeSpans(md) {
+  const codes = [];
+  const out = md.replace(/(`{1,2})([^`\n]|\.(?!`))*?\1/g, (m2, fence, body) => {
+    codes.push(body);
+    return `\x00SPAN${codes.length - 1}\x00`;
+  });
+  return { text: out, codes };
+}
+
+function restoreCodeSpans(html, codes) {
+  return html.replace(/\x00SPAN(\d+)\x00/g, (_m, i) => `<code>${escapeHtml(codes[Number(i)] ?? '')}</code>`);
 }
 
 function restoreCode(html, codes) {

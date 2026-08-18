@@ -5,12 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [sveltekit(), tailwindcss()],
   server: {
-    proxy: {
-      // Dev only: the browser talks to :5173, API calls are forwarded to the
-      // node API server on :4000 so there is no CORS in development.
-      '/api': 'http://localhost:4000',
-      '/health': 'http://localhost:4000'
-    }
+    host: true, // 0.0.0.0 — reachable from outside the container/box
   },
   ssr: {
     // Native modules must stay external in the SSR bundle — they are loaded

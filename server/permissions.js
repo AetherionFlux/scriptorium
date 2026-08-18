@@ -37,8 +37,9 @@ export const ACTIONS = [
 export function can(ctx, action, opts = {}) {
   const { user, space } = ctx;
 
-  // Global admin: everything, always.
-  if (user?.role === 'admin') return true;
+  // Global admin: everything, but only for actions the engine defines —
+  // an unknown action name is a bug and must fail closed.
+  if (user?.role === 'admin') return ACTIONS.includes(action);
 
   // Unauthenticated: read-only on public spaces, nothing else.
   if (!user) {
@@ -47,7 +48,9 @@ export function can(ctx, action, opts = {}) {
 
   const role = spaceRole(user.id, space);
   if (role === null) {
-    // No membership: anonymous-style rules still apply to authenticated users.
+    // No membership: anonymous-style rules still apply to authenticated users,
+    // and any signed-in user may create a space (global capability).
+    if (action === 'space.create') return true;
     return (action === 'space.view' || action === 'page.view') && space.visibility === 'public';
   }
 

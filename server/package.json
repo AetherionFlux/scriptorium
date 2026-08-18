@@ -12,7 +12,9 @@
     "./db": "./db.js",
     "./markdown": "./markdown.js",
     "./permissions": "./permissions.js",
-    "./sanitize": "./sanitize.js"
+    "./sanitize": "./sanitize.js",
+    "./routes": "./routes.js",
+    "./seed": "./seed.js"
   },
   "scripts": {
     "test": "vitest run"

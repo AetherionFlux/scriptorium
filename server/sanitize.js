@@ -92,6 +92,14 @@ export function sanitizeHtml(html) {
       out += tok; // text node (already escaped by the markdown pipeline)
       continue;
     }
+    // Script/style content is dropped entirely (it is executable-ish and
+    // never part of rendered wiki content).
+    if (/^<(script|style)/i.test(tok)) {
+      const close = new RegExp(`</${tok[1].toLowerCase()}>`, 'i').exec(html.slice(tokenRe.lastIndex));
+      if (close) tokenRe.lastIndex += close.index + close[0].length;
+      else tokenRe.lastIndex = html.length;
+      continue;
+    }
     const tagRe = /^<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)\/?>$/;
     const tm = tagRe.exec(tok);
     if (!tm) continue;
@@ -109,7 +117,8 @@ export function sanitizeHtml(html) {
       const allowed =
         name === 'class' ||
         TAG_ATTRS[tag]?.includes(name) ||
-        (isMathTag(tag) && (name === 'style' ? SAFE_MATH_STYLE.test(value) : true));
+        (isMathTag(tag) && (name === 'style' ? SAFE_MATH_STYLE.test(value) : true)) ||
+        (tag === 'span' && name === 'style' && SAFE_MATH_STYLE.test(value)); // KaTeX mspace
       if (!allowed) continue;
       if (URL_ATTRS.has(name) && !safeUrl(value, name)) continue;
       attrStr += value === '' && VOID.has(tag) === false && ['checked', 'disabled'].includes(name)
