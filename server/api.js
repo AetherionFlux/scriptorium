@@ -110,7 +110,7 @@ export async function authRegister(ctx) {
   const existing = ctx.db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (existing) return err('CONFLICT', 'An account with that email already exists.', 409);
 
-  const isAdmin = ctx.db.prepare('SELECT COUNT(*) AS n FROM users').get().n === 0;
+  const isAdmin = ctx.db.prepare('SELECT COUNT(*) AS n FROM users WHERE is_seed = 0').get().n === 0;
   const hash = await hashPassword(password);
   const info = ctx.db.prepare('INSERT INTO users (email, name, password_hash, role) VALUES (?,?,?,?)')
     .run(email, displayName, hash, isAdmin ? 'admin' : 'user');
@@ -403,7 +403,7 @@ export function createPage(ctx) {
 
   const now = new Date().toISOString();
   const info = ctx.db.transaction(() => {
-    const i = ctx.db.prepare('INSERT INTO pages (space_id, slug, title, content, parent_id, rev, created_by, updated_by, created_at, updated_at) VALUES (?,?,?,?,?,1,?,?,?)')
+    const i = ctx.db.prepare('INSERT INTO pages (space_id, slug, title, content, parent_id, rev, created_by, updated_by, created_at, updated_at) VALUES (?,?,?,?,?,1,?,?,?,?)')
       .run(space.id, finalSlug, title.trim(), content ?? '', parentId, ctx.user.id, ctx.user.id, now, now);
     const r = ctx.db.prepare('INSERT INTO page_history (page_id, rev, content, title, author_id) VALUES (?,?,?,?,?)')
       .run(i.lastInsertRowid, 1, content ?? '', title.trim(), ctx.user.id);
@@ -529,10 +529,10 @@ export function search(ctx) {
   // Candidate pages from FTS, then filtered by space visibility.
   const rows = ctx.db.prepare(`
     SELECT p.id, p.space_id, p.slug, p.title, s.slug AS space_slug, s.name AS space_name,
-           snippet(pages_fts, 3, '…', '…', 24) AS snippet,
+           snippet(pages_fts, 1, '…', '…', '…', 32) AS snippet,
            bm25(pages_fts) AS rank
     FROM pages_fts
-    JOIN pages p ON p.id = pages_fts.page_id
+    JOIN pages p ON p.id = pages_fts.rowid
     JOIN spaces s ON s.id = p.space_id
     WHERE pages_fts MATCH ? AND p.deleted_at IS NULL
     ORDER BY rank

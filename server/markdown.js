@@ -89,20 +89,38 @@ export function extractCallouts(md) {
 
     const type = m[2].toLowerCase();
     const label = m[3].trim().replace(/^\*\*(.+?)\*\*$/, '$1');
+    const indent = m[1].length; // column of this callout's quote marker
+
+    // A *sibling* marker: exactly one `>` at this callout's indent, then `[!`.
+    // (`> > [!x]` is NESTED — one extra quote level — and belongs to this block.)
+    const siblingMarker = (line) =>
+      line.match(/^\s*/)[0].length === indent && /^\s*> ?\[!/.test(line);
 
     // Find the end of the blockquote block.
     let end = i + 1;
     while (end < lines.length) {
       const ln = lines[end];
       if (ln.trim() === '') {
+        // A blank line continues the callout only when the next quote line is
+        // a continuation of this callout — not a sibling `[!type]` marker (a
+        // new callout) and not at a different indent (a different block).
         let j = end + 1;
         while (j < lines.length && lines[j].trim() === '') j++;
-        // Blank line continues the blockquote only if a quote line follows it.
-        if (!(j < lines.length && lines[j].trimStart().startsWith('>'))) break;
+        if (j < lines.length) {
+          const nxt = lines[j];
+          const nxtIndent = nxt.match(/^\s*/)[0].length;
+          if (nxt.trimStart().startsWith('>') && nxtIndent === indent && !siblingMarker(nxt)) {
+            end++;
+            continue;
+          }
+        }
+        break;
+      }
+      if (ln.trimStart().startsWith('>')) {
+        if (siblingMarker(ln)) break; // a new sibling callout ends this block
         end++;
         continue;
       }
-      if (ln.trimStart().startsWith('>')) { end++; continue; }
       break;
     }
 

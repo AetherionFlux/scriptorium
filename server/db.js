@@ -124,50 +124,43 @@ export const MIGRATIONS = [
     version: 2,
     sql: `
     -- Full-text search over page title + content, bm25 ranked.
+    -- External-content FTS5: the index is a pure index; rows are read from
+    -- the real pages table by rowid, so there is nothing to duplicate.
     CREATE VIRTUAL TABLE pages_fts USING fts5(
-      page_id UNINDEXED,
-      space_id UNINDEXED,
       title,
       content,
-      content='pages_content'
+      content='pages',
+      content_rowid='id'
     );
 
-    -- External-content FTS5 needs a shadow table the tokenizer can read from.
-    CREATE VIRTUAL TABLE pages_content USING fts5(
-      page_id UNINDEXED,
-      space_id UNINDEXED,
-      title,
-      content
-    );
-
-    -- Keep the FTS index in sync with pages (deactivated rows are dropped).
+    -- Keep the FTS index in sync with pages.
     CREATE TRIGGER pages_ai AFTER INSERT ON pages BEGIN
-      INSERT INTO pages_content(rowid, page_id, space_id, title, content)
-        VALUES (new.id, new.id, new.space_id, new.title, new.content);
-      INSERT INTO pages_fts(rowid, page_id, space_id, title, content)
-        VALUES (new.id, new.id, new.space_id, new.title, new.content);
+      INSERT INTO pages_fts(rowid, title, content)
+        VALUES (new.id, new.title, new.content);
     END;
 
     CREATE TRIGGER pages_ad AFTER DELETE ON pages BEGIN
-      INSERT INTO pages_content(pages_content, rowid, page_id, space_id, title, content)
-        VALUES ('delete', old.id, old.id, old.space_id, old.title, old.content);
-      INSERT INTO pages_fts(pages_fts, rowid, page_id, space_id, title, content)
-        VALUES ('delete', old.id, old.id, old.space_id, old.title, old.content);
+      INSERT INTO pages_fts(pages_fts, rowid, title, content)
+        VALUES ('delete', old.id, old.title, old.content);
     END;
 
     CREATE TRIGGER pages_au AFTER UPDATE OF title, content ON pages BEGIN
-      INSERT INTO pages_content(pages_content, rowid, page_id, space_id, title, content)
-        VALUES ('delete', old.id, old.id, old.space_id, old.title, old.content);
-      INSERT INTO pages_fts(pages_fts, rowid, page_id, space_id, title, content)
-        VALUES ('delete', old.id, old.id, old.space_id, old.title, old.content);
-      INSERT INTO pages_content(rowid, page_id, space_id, title, content)
-        VALUES (new.id, new.id, new.space_id, new.title, new.content);
-      INSERT INTO pages_fts(rowid, page_id, space_id, title, content)
-        VALUES (new.id, new.id, new.space_id, new.title, new.content);
+      INSERT INTO pages_fts(pages_fts, rowid, title, content)
+        VALUES ('delete', old.id, old.title, old.content);
+      INSERT INTO pages_fts(rowid, title, content)
+        VALUES (new.id, new.title, new.content);
     END;
 
     CREATE INDEX idx_pages_space ON pages(space_id, deleted_at);
     CREATE INDEX idx_activity_recent ON activity(created_at DESC);
+    `
+  },
+  {
+    version: 3,
+    sql: `
+    -- Marks the bootstrap placeholder account so first-real-user-becomes-admin
+    -- works even though the seed space needs an owner.
+    ALTER TABLE users ADD COLUMN is_seed INTEGER NOT NULL DEFAULT 0;
     `
   }
 ];

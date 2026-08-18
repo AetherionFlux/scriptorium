@@ -46,6 +46,14 @@ describe('callouts', () => {
     expect(h).toContain('<li>one</li>');
   });
 
+  it('does not merge two separate callouts split by a blank line', () => {
+    const h = R('> [!note]\n> first\n>\n> [!warning]\n> second');
+    const boxes = h.match(/class="callout callout-/g) ?? [];
+    expect(boxes.length).toBe(2);
+    expect(h).toContain('callout-note');
+    expect(h).toContain('callout-warning');
+  });
+
   it('does not treat callout markers inside code blocks as callouts', () => {
     const h = R('```\n> [!warning]\nnot a callout\n```');
     expect(h).not.toContain('callout-warning');

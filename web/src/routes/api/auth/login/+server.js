@@ -1,11 +1,11 @@
 /**
- * POST /api/auth/login — API route (SvelteKit adapter).
+ * API route (SvelteKit adapter) —  POST .
  *
- * Delegates to the framework-agnostic handler in `server/api.js`; see
- * server/routes.js for the full table and docs/api.md for the contract.
+ * All methods for this path delegate to the framework-agnostic handlers in
+ * `server/api.js` via the shared route table (server/routes.js).
  */
 import { dispatchApi } from '$lib/server-core.js';
 
-export async function post(request) {
-  return dispatchApi(request);
+export async function POST(event) {
+  return dispatchApi(event);
 }

@@ -1,11 +1,11 @@
 /**
- * GET /api/katex/fonts/:file — API route (SvelteKit adapter).
+ * API route (SvelteKit adapter) —  GET .
  *
- * Delegates to the framework-agnostic handler in `server/api.js`; see
- * server/routes.js for the full table and docs/api.md for the contract.
+ * All methods for this path delegate to the framework-agnostic handlers in
+ * `server/api.js` via the shared route table (server/routes.js).
  */
 import { dispatchApi } from '$lib/server-core.js';
 
-export async function get(request) {
-  return dispatchApi(request);
+export async function GET(event) {
+  return dispatchApi(event);
 }

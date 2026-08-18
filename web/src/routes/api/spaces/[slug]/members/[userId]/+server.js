@@ -1,13 +1,15 @@
 /**
- * DELETE /api/spaces/:slug/members/:userId — API route (SvelteKit adapter).
+ * API route (SvelteKit adapter) —  DELETE + PATCH .
  *
- * Delegates to the framework-agnostic handler in `server/api.js`; see
- * server/routes.js for the full table and docs/api.md for the contract.
+ * All methods for this path delegate to the framework-agnostic handlers in
+ * `server/api.js` via the shared route table (server/routes.js).
  */
 import { dispatchApi } from '$lib/server-core.js';
 
-async function removeHandler(request) {
-  return dispatchApi(request);
+export async function PATCH(event) {
+  return dispatchApi(event);
 }
 
-export { removeHandler as delete }
+export async function DELETE(event) {
+  return dispatchApi(event);
+}

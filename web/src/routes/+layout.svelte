@@ -12,7 +12,7 @@
   import { initAuth, logout, state as store } from '$lib/store.svelte.js';
   import { getCsrf } from '$lib/api.js';
 
-  let { data } = $props();
+  let { data, children } = $props();
 
   let q = $state('');
   let showUserMenu = $state(false);

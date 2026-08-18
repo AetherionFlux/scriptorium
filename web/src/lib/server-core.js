@@ -26,10 +26,14 @@ export function core() {
   return { db: _db, secret: _secret, userStmt: _userStmt };
 }
 
-/** Parse cookies from a SvelteKit Request. */
+/** Parse cookies from a SvelteKit request (header-based; no Request.cookies dep). */
 function cookiesOf(request) {
   const out = {};
-  for (const c of request.cookies.getAll()) out[c.name] = c.value;
+  const raw = request.headers.get('cookie') ?? '';
+  for (const part of raw.split(';')) {
+    const i = part.indexOf('=');
+    if (i > 0) out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+  }
   return out;
 }
 
@@ -52,11 +56,13 @@ export function resolveUser(request) {
 
 /**
  * The universal API dispatcher. Each +server.js route calls this with the
- * request; the shared table (server/routes.js) picks the handler.
+ * SvelteKit RouteEvent; the shared table (server/routes.js) picks the handler.
  */
-export async function dispatchApi(request) {
+export async function dispatchApi(event) {
+  // SvelteKit passes a RouteEvent: { request, url, params, locals, ... }
+  const request = event.request;
   const { db, secret, userStmt } = core();
-  const url = new URL(request.url);
+  const url = event.url;
   const pathAfterApi = url.pathname.replace(/^\/api\//, '');
   const m = match(request.method, pathAfterApi);
   if (!m) return jsonResp(404, { error: 'Unknown endpoint.', code: 'NOT_FOUND' });

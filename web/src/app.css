@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tailwindcss/typography";
 
 /* ------------------------------------------------------------------ */
 /* Scriptorium palette — ink (dark bg) / parchment (text) / ember (accent) */
@@ -116,18 +115,35 @@ html {
 .cm-editor.cm-focused { outline: none; }
 .cm-scroller { font-family: var(--font-mono); font-size: 14px; line-height: 1.6; }
 
-/* Small shared UI */
-.btn { @apply inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed; }
-.btn-primary { @apply btn bg-ember-500 text-ink-950 hover:bg-ember-400; }
-.btn-ghost { @apply btn text-parchment-dim hover:text-parchment hover:bg-ink-800 border border-ink-700; }
-.btn-danger { @apply btn text-red-300 border border-red-900/60 hover:bg-red-950/40; }
-.input {
-  @apply w-full rounded-md bg-ink-900 border border-ink-700 px-3 py-2 text-sm text-parchment
-    placeholder-parchment-faint focus:outline-none focus:border-ember-500/60 focus:ring-1 focus:ring-ember-500/40;
+/* Small shared UI (plain CSS; Tailwind v4 cannot @apply custom classes) */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  border-radius: 0.375rem; padding: 0.375rem 0.75rem;
+  font-size: 0.875rem; font-weight: 500; transition: background-color 150ms, color 150ms;
+  cursor: pointer;
 }
-.card { @apply rounded-xl border border-ink-700 bg-ink-900; }
-.badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider; }
-.badge-public { @apply badge bg-emerald-950/60 text-emerald-400 border border-emerald-900; }
-.badge-private { @apply badge bg-amber-950/60 text-amber-400 border border-amber-900; }
-.badge-admin { @apply badge bg-red-950/60 text-red-400 border border-red-900; }
-.badge-role { @apply badge bg-ink-800 text-parchment-dim border border-ink-600; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--color-ember-500); color: var(--color-ink-950); }
+.btn-primary:hover:not(:disabled) { background: var(--color-ember-400); }
+.btn-ghost { color: var(--color-parchment-dim); border: 1px solid var(--color-ink-700); }
+.btn-ghost:hover:not(:disabled) { color: var(--color-parchment); background: var(--color-ink-800); }
+.btn-danger { color: #fca5a5; border: 1px solid rgb(127 29 29 / 0.6); }
+.btn-danger:hover:not(:disabled) { background: rgb(69 10 10 / 0.4); }
+.input {
+  width: 100%; border-radius: 0.375rem; background: var(--color-ink-900);
+  border: 1px solid var(--color-ink-700); padding: 0.5rem 0.75rem;
+  font-size: 0.875rem; color: var(--color-parchment);
+}
+.input::placeholder { color: var(--color-parchment-faint); }
+.input:focus { outline: none; border-color: rgb(217 148 36 / 0.6); box-shadow: 0 0 0 1px rgb(217 148 36 / 0.4); }
+select.input { appearance: auto; }
+.card { border-radius: 0.75rem; border: 1px solid var(--color-ink-700); background: var(--color-ink-900); }
+.badge {
+  display: inline-flex; align-items: center; border-radius: 9999px;
+  padding: 0.125rem 0.5rem; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid transparent;
+}
+.badge-public { background: rgb(6 78 59 / 0.6); color: #34d399; border-color: rgb(6 78 59); }
+.badge-private { background: rgb(120 53 15 / 0.6); color: #fbbf24; border-color: rgb(120 53 15); }
+.badge-admin { background: rgb(69 10 10 / 0.6); color: #f87171; border-color: rgb(69 10 10); }
+.badge-role { background: var(--color-ink-800); color: var(--color-parchment-dim); border-color: var(--color-ink-600); }

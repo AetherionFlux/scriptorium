@@ -124,8 +124,8 @@ export function seed(db) {
   // A seed user is required because spaces reference an owner. This account
   // is intentionally unusable (random password hash) and exists only to anchor
   // the default space; the first real registration still becomes admin.
-  const owner = db.prepare(`INSERT INTO users (email, name, password_hash, role)
-    VALUES ('seed@scriptorium.local', 'Scriptorium Seed', '$argon2id$v=19$m=262144,t=3,p=4$impossiblehash$', 'user')`)
+  const owner = db.prepare(`INSERT INTO users (email, name, password_hash, role, is_seed)
+    VALUES ('seed@scriptorium.local', 'Scriptorium Seed', '$argon2id$v=19$m=262144,t=3,p=4$impossiblehash$', 'user', 1)`)
     .run();
 
   db.prepare(`INSERT INTO spaces (slug, name, description, visibility, owner_id)

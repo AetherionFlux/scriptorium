@@ -1,12 +1,19 @@
 /**
- * DELETE /api/spaces/:slug/pages… — API route (SvelteKit adapter).
+ * API route (SvelteKit adapter) —  DELETE + GET + PUT .
  *
- * Delegates to the framework-agnostic handler in `server/api.js`.
+ * All methods for this path delegate to the framework-agnostic handlers in
+ * `server/api.js` via the shared route table (server/routes.js).
  */
 import { dispatchApi } from '$lib/server-core.js';
 
-async function removeHandler(request) {
-  return dispatchApi(request);
+export async function GET(event) {
+  return dispatchApi(event);
 }
 
-export { removeHandler as delete }
+export async function PUT(event) {
+  return dispatchApi(event);
+}
+
+export async function DELETE(event) {
+  return dispatchApi(event);
+}
