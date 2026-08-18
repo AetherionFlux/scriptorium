@@ -1,0 +1,32 @@
+{
+  "name": "scriptorium-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Scriptorium frontend — SvelteKit 2 (Svelte 5 runes), Tailwind CSS 4, CodeMirror 6 editor.",
+  "scripts": {
+    "dev": "vite dev --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --port 5173",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.0",
+    "@codemirror/language-data": "^6.5.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "codemirror": "^6.0.2",
+    "scriptorium-server": "*"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-node": "^5.2.0",
+    "@sveltejs/kit": "^2.20.0",
+    "@sveltejs/vite-plugin-svelte": "^6.0.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.0",
+    "svelte": "^5.25.0",
+    "svelte-check": "^4.1.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0"
+  }
+}

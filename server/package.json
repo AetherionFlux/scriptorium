@@ -1,0 +1,29 @@
+{
+  "name": "scriptorium-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-agnostic backend core of Scriptorium: SQLite db, auth, permissions, markdown dialect, API dispatch.",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./api": "./api.js",
+    "./auth": "./auth.js",
+    "./db": "./db.js",
+    "./markdown": "./markdown.js",
+    "./permissions": "./permissions.js",
+    "./sanitize": "./sanitize.js"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "better-sqlite3": "^12.2.0",
+    "katex": "^0.16.22",
+    "marked": "^15.0.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.0"
+  }
+}

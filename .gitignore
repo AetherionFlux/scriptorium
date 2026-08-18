@@ -1,0 +1,21 @@
+# deps / build
+node_modules/
+web/build/
+.svelte-kit/
+dist/
+
+# data
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# env / secrets
+.env
+.env.*
+
+# os / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
