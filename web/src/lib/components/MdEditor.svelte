@@ -5,7 +5,7 @@
 -->
 <script>
   import { onMount } from 'svelte';
-  import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter, placeholder } from 'codemirror';
+  import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter, placeholder } from '@codemirror/view';
   import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
   import { languages } from '@codemirror/language-data';
   import { EditorState } from '@codemirror/state';

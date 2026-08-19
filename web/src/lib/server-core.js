@@ -4,11 +4,23 @@
  * Boots the database + secret once per process, resolves the request user
  * from the session cookie (or X-Api-Key), enforces CSRF on mutating calls,
  * and dispatches to server/api.js via the shared route table.
+ *
+ * The backend is loaded through `createRequire` at runtime instead of static
+ * `import`s: SvelteKit's production build would otherwise inline the
+ * workspace package into the ESM server bundle, which breaks native CJS
+ * dependencies (argon2 references `__dirname`, which does not exist in the
+ * emitted ESM chunks). Requiring keeps the backend as real Node modules —
+ * the same code path the dev server and the standalone server use.
  */
-import { openDb } from 'scriptorium-server/db.js';
-import { seed } from 'scriptorium-server/seed.js';
-import { loadOrCreateSecret, verifySessionToken, csrfFor, COOKIE_NAME } from 'scriptorium-server/auth.js';
-import { match, makeCtx, checkCsrf, toResponse } from 'scriptorium-server/routes.js';
+import { createRequire } from 'node:module';
+
+const req = createRequire(import.meta.url);
+const backend = (mod) => req(`scriptorium-server/${mod}`);
+
+const { openDb } = backend('db.js');
+const { seed } = backend('seed.js');
+const { loadOrCreateSecret, verifySessionToken, csrfFor, COOKIE_NAME } = backend('auth.js');
+const { match, makeCtx, checkCsrf, toResponse } = backend('routes.js');
 
 let _db = null;
 let _secret = null;

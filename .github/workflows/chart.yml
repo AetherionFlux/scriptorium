@@ -1,0 +1,35 @@
+name: Helm chart release
+
+# On version tags (v*): lint, package, and publish the chart to the GitHub
+# Releases page as an artifact (scriptorium-<version>.tgz).
+#
+# To install from a git repo:  helm repo add ... / git+https
+# To install from a release:   helm install scriptorium <release-tgz-url>
+# (chart-releaser / OCI push can be layered on later; releases give a
+# zero-dependency install path for v1.)
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release-chart:
+    name: Package & publish chart
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.21.4
+      - name: Lint
+        run: helm lint charts/scriptorium
+      - name: Package
+        run: helm package charts/scriptorium -d dist/
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_notes: true
+          files: dist/*.tgz

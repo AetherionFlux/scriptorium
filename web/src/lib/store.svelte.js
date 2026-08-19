@@ -8,9 +8,15 @@ let user = $state(null);
 let checked = $state(false);
 let toasts = $state([]);
 
-/** Load the current session once at layout mount. */
-export async function initAuth() {
-  user = await me();
+/**
+ * Load the current session once at layout mount.
+ * Pass the SSR-resolved `preset` user to seed state immediately (avoids a
+ * flash of "logged out" and the extra round-trip for already-authenticated
+ * visitors). We still re-verify against the API when no preset was provided.
+ */
+export async function initAuth(preset = null) {
+  if (preset) user = preset;
+  else user = await me();
   checked = true;
   return user;
 }

@@ -8,7 +8,6 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import '../app.css';
-  import { resolveUser } from '$lib/server-core.js';
   import { initAuth, logout, state as store } from '$lib/store.svelte.js';
   import { getCsrf } from '$lib/api.js';
 
@@ -23,7 +22,7 @@
   let searching = $state(false);
 
   onMount(async () => {
-    await initAuth();
+    await initAuth(data.user ?? null);
     window.addEventListener('scriptorium:new-space', openNewSpace);
     window.addEventListener('scriptorium:refresh-spaces', loadSpaces);
   });

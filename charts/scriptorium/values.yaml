@@ -1,0 +1,77 @@
+# Default values for the Scriptorium chart.
+#
+# NOTE on replicas: Scriptorium stores data in a single SQLite database on a
+# local volume. Keep replicaCount at 1; scaling out horizontally would require
+# a shared-writer store (see docs/architecture.md, "Scaling story").
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/aetherionflux/scriptorium
+  # main tracks the latest CI push; pin to a version tag (v0.1.0) for stable deploys.
+  tag: main
+  pullPolicy: IfNotPresent
+
+# Secret names for pulling the image from GHCR, e.g.:
+#   kubectl create secret docker-registry ghcr-pull \
+#     --docker-server=ghcr.io --docker-username=<gh-user> --docker-password=<gh-pat>
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8787
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  #   cert-manager.io/cluster-issuer: letsencrypt
+  host: wiki.example.com
+  path: /
+  pathType: Prefix
+  tls: []
+  #  - secretName: scriptorium-tls
+  #    hosts: [wiki.example.com]
+
+# SQLite lives on this volume — back it up to back up the wiki.
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+env:
+  # Strongly recommended: a stable secret so sessions survive pod restarts.
+  # Leave empty to let Scriptorium auto-generate one inside the volume
+  # (still survives restarts, as long as the PVC sticks).
+  SESSION_SECRET: ""
+  SESSION_MAX_AGE_DAYS: "30"
+  # Extra environment vars, e.g. TZ.
+  extra: {}
+  # TZ: UTC
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  fsGroup: 10001
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

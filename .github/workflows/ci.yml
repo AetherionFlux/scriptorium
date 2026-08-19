@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  server-tests:
+    name: Server tests (vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Unit tests (markdown, permissions)
+        run: npm run test -w server
+
+  web-check:
+    name: Frontend (svelte-check + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: svelte-check
+        run: npm run check -w web
+      - name: Production build (adapter-node)
+        run: npm run build -w web
+      - name: Smoke boot of built server
+        run: |
+          set -e
+          (node web/build/index.js &)
+          for i in $(seq 1 30); do
+            sleep 1
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8787/api/health || true)
+            [ "$code" = "200" ] && break
+          done
+          [ "$code" = "200" ] || { echo "health check failed (last: $code)"; exit 1; }
+          echo "built server OK"
+
+  helm-chart:
+    name: Helm chart (lint + template)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.21.4
+      - name: Lint
+        run: helm lint charts/scriptorium
+      - name: Template (default + ingress/secret/no-persistence)
+        run: |
+          helm template test charts/scriptorium > /dev/null
+          helm template test charts/scriptorium \
+            --set ingress.enabled=true \
+            --set ingress.host=wiki.local \
+            --set env.SESSION_SECRET=x \
+            --set persistence.enabled=false > /dev/null
+      - name: Package
+        run: helm package charts/scriptorium -d dist/

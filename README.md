@@ -39,11 +39,19 @@ Open http://localhost:8787 — the first account you register becomes **admin**.
 
 ## Kubernetes (Helm)
 
+The chart is validated in CI and packaged as a release artifact on version
+tags (`v*` → GitHub Release → `scriptorium-<version>.tgz`).
+
 ```bash
-helm repo add aetherionflux https://aetherionflux.github.io/scriptorium   # (TBD: chart hosting)
-helm install scriptorium ./charts/scriptorium \
+# from a release artifact
+helm install scriptorium <release-url>/scriptorium-0.1.0.tgz \
   --set image.repository=ghcr.io/aetherionflux/scriptorium \
+  --set image.tag=v0.1.0 \
   --set persistence.size=10Gi
+
+# or straight from a clone of this repo
+git clone https://github.com/AetherionFlux/scriptorium.git
+helm install scriptorium ./scriptorium/charts/scriptorium
 ```
 
 See [docs/deployment.md](docs/deployment.md) for full options.
@@ -52,10 +60,11 @@ See [docs/deployment.md](docs/deployment.md) for full options.
 
 ```bash
 npm install
-npm run dev        # API :4000 + web :5173 (proxied /api → :4000)
+npm run dev        # full stack (UI + API) on http://localhost:5173
 npm test           # vitest (server-side dialect + permissions)
 npm run check      # svelte-check
-npm run build      # production build of the web app
+npm run build      # production build → web/build (adapter-node)
+npm start          # run the production build (PORT, DATA_DIR env)
 ```
 
 ## Repository layout

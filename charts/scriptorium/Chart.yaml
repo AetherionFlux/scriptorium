@@ -1,0 +1,15 @@
+apiVersion: v2
+name: scriptorium
+description: Scriptorium — a modern markdown wiki (spaces, permissions, in-browser editing).
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/AetherionFlux/scriptorium
+sources:
+  - https://github.com/AetherionFlux/scriptorium
+keywords:
+  - wiki
+  - markdown
+  - knowledge-base
+maintainers:
+  - name: AetherionFlux

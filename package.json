@@ -3,20 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Scriptorium — a modern markdown wiki: SvelteKit 2 + Svelte 5, Tailwind, SQLite, Docker, Helm.",
+  "description": "Scriptorium \u2014 a modern markdown wiki: SvelteKit 2 + Svelte 5, Tailwind, SQLite, Docker, Helm.",
   "workspaces": [
     "server",
     "web"
   ],
   "scripts": {
-    "dev": "concurrently -n api,web -c blue,magenta \"PORT=4000 node server/index.js\" \"npm run dev -w web\"",
+    "dev": "npm run dev -w web",
     "build": "npm run build -w web",
-    "start": "node server/index.js",
+    "start": "node web/build/index.js",
+    "start:api": "node server/index.js",
     "test": "npm run test -w server",
     "check": "npm run check -w web"
-  },
-  "devDependencies": {
-    "concurrently": "^9.2.0"
   },
   "allowScripts": {
     "argon2@0.44.0": true,
