@@ -66,7 +66,8 @@ Status legend: ✅ done · 🚧 in progress · ⬜ planned
 
 - [x] Phased delivery (foundations → backend → frontend → packaging), each phase
       committed and CI-verified on `main`
-- [ ] Rate limiting on auth endpoints (login, register, reset)
+- [x] Rate limiting on auth endpoints (login 20/15min, register 5/h, reset
+      10/h — per-IP, 429 + Retry-After; unit-tested, live-verified)
 - [ ] Optional OIDC / SAML federation for SSO
 - [ ] Import / export: bulk JSON export per space, import from Markdown folders
 - [ ] Page attachments (upload, store under `/data/uploads`, signed URLs)

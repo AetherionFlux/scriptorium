@@ -29,6 +29,11 @@ Error shape (all failures):
 | POST | `/auth/reset` | `{email}` | creates reset token (stored, not emailed in v1) |
 | POST | `/auth/reset/confirm` | `{token, password}` | sets new password |
 
+**Rate limiting** — per client IP, enforced before any auth work: `login`
+20 requests / 15 min, `register` 5 / hour, `reset` + `reset/confirm` 10 / hour.
+Exceeding a limit returns `429` with a `Retry-After` header. (In-memory,
+per-process — move to a shared store if you run multiple replicas.)
+
 ## Spaces
 
 | Method | Path | Notes |

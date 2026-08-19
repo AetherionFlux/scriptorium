@@ -21,6 +21,7 @@ const { openDb } = backend('db.js');
 const { seed } = backend('seed.js');
 const { loadOrCreateSecret, verifySessionToken, csrfFor, COOKIE_NAME } = backend('auth.js');
 const { match, makeCtx, checkCsrf, toResponse } = backend('routes.js');
+const { checkAuthRate } = backend('ratelimit.js');
 
 let _db = null;
 let _secret = null;
@@ -82,7 +83,7 @@ export async function dispatchApi(event) {
     }
   }
   const query = Object.fromEntries(event.url.searchParams);
-  return runApi(request.method, pathAfterApi, request, { body, query });
+  return runApi(request.method, pathAfterApi, request, { body, query, clientAddress: event.clientAddress });
 }
 
 /**
@@ -90,10 +91,16 @@ export async function dispatchApi(event) {
  * run the handler → Response. Shared by dispatchApi and apiStatus so the two
  * can never drift apart.
  */
-async function runApi(method, pathAfterApi, request, { body = {}, query = {} }) {
+async function runApi(method, pathAfterApi, request, { body = {}, query = {}, clientAddress }) {
   const { db, secret } = core();
   const m = match(method, pathAfterApi);
   if (!m) return jsonResp(404, { error: 'Unknown endpoint.', code: 'NOT_FOUND' });
+
+  // Throttle auth endpoints per IP before doing any real work (argon2 is
+  // deliberately expensive — an unthrottled login is a DoS vector).
+  // Non-auth paths return null immediately.
+  const rl = checkAuthRate(request, pathAfterApi, clientAddress);
+  if (rl) return jsonResp(rl.status, rl.body, rl.headers);
 
   const { user, csrf } = resolveUser(request);
   const ctx = makeCtx({

@@ -13,6 +13,7 @@ import { openDb } from './db.js';
 import { seed } from './seed.js';
 import { loadOrCreateSecret, verifySessionToken, csrfFor, COOKIE_NAME } from './auth.js';
 import { match, makeCtx, checkCsrf, toResponse } from './routes.js';
+import { checkAuthRate } from './ratelimit.js';
 
 const PORT = Number(process.env.PORT || 4000);
 const DATA_DIR = process.env.DATA_DIR || new URL('../data/', import.meta.url).pathname;
@@ -61,6 +62,11 @@ const server = http.createServer(async (req, res) => {
   if (path.startsWith('/api/')) {
     const m = match(req.method, path.slice(4));
     if (!m) return send(404, { error: 'Unknown endpoint.', code: 'NOT_FOUND' });
+
+    // Throttle auth endpoints per IP before doing any real work (argon2 is
+    // deliberately expensive — an unthrottled login is a DoS vector).
+    const rl = checkAuthRate(req, path.slice(4), req.socket?.remoteAddress);
+    if (rl) return send(rl.status, rl.body, rl.headers);
 
     const cookies = parseCookies(req);
     const session = cookies[COOKIE_NAME] ?? null;
