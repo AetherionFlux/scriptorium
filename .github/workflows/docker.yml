@@ -57,8 +57,8 @@ jobs:
       - name: Smoke test the image
         run: |
           set -e
-          TAG="${{ steps.meta.outputs.tags }}"
-          IMAGE="${TAG%% *}"
+          # metadata-action returns newline-separated tags; take the first
+          IMAGE=$(echo "${{ steps.meta.outputs.tags }}" | head -n1)
           docker pull "$IMAGE"
           docker run -d --name scriptorium-smoke -p 8787:8787 -v scriptorium-smoke-data:/data "$IMAGE"
           for i in $(seq 1 30); do
