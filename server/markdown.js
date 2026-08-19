@@ -31,7 +31,11 @@ import { sanitizeHtml, escapeHtml } from './sanitize.js';
 // Resolve katex's dist files via Node's module resolution (works whether npm
 // hoists node_modules to the workspace root or not).
 const _req = createRequire(import.meta.url);
-const KATEX_CSS = readFileSync(_req.resolve('katex/dist/katex.min.css'), 'utf8');
+// KaTeX's minified CSS references fonts via relative url(fonts/…). Because we
+// serve it at /api/katex.css, those resolve to /api/fonts/… — but the font
+// route is /api/katex/fonts/:file. Rewrite the prefix so math fonts load.
+const KATEX_CSS = readFileSync(_req.resolve('katex/dist/katex.min.css'), 'utf8')
+  .replace(/url\((['"]?)fonts\//g, 'url($1katex/fonts/');
 
 /** Absolute path to a katex dist font (used by the /api/katex/fonts route). */
 export function katexFontPath(name) {
