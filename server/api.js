@@ -352,7 +352,7 @@ export function removeMember(ctx) {
 
 /** GET /api/spaces/:slug/pages — nested tree */
 export function listPages(ctx) {
-  const space = spaceBySlug(ctx.db, ctx.url.slug);
+  const space = spaceBySlug(ctx.db, ctx.url.spaceSlug);
   if (!space) return err('NOT_FOUND', 'Space not found.', 404);
   const s = spaceWithMembers(ctx.db, space);
   if (!can({ user: ctx.user, space: s }, 'page.view')) return err('FORBIDDEN', 'You do not have access to this space.', 403);

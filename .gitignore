@@ -21,3 +21,5 @@ data-screenshots/
 .idea/
 .vscode/
 seed_screenshots.py
+data-prod/
+data.bak.*/

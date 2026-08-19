@@ -17,8 +17,11 @@ const T = [
   ['POST', '/auth/login', H.authLogin, true, true],
   ['POST', '/auth/logout', H.authLogout, true, true],
   ['GET', '/auth/me', H.authMe],
-  ['POST', '/auth/reset', H.authReset, true],
-  ['POST', '/auth/reset/confirm', H.authResetConfirm, true],
+  // Password reset is a pre-session flow: the user has no session (that's the
+  // point), so a session-bound CSRF token is impossible — same reasoning as
+  // login/register. Tokens are single-use, 1h-expiry, and never enumerable.
+  ['POST', '/auth/reset', H.authReset, true, true],
+  ['POST', '/auth/reset/confirm', H.authResetConfirm, true, true],
 
   // spaces
   ['GET', '/spaces', H.listSpaces],

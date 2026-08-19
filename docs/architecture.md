@@ -5,7 +5,7 @@
 ```
                  ┌────────────────────────────────────────────────┐
                  │            Node.js process (one port)          │
-   browser ────► │  SvelteKit (SSR) ──► /api/* ──► server/api.ts  │
+   browser ────► │  SvelteKit (SSR) ──► /api/* ──► server/api.js  │
                  │            │                          │        │
                  │            │                  ┌──────────────┐ │
                  │            │                  │ permission   │ │
@@ -15,7 +15,7 @@
                  │                               │  admin)      │ │
                  │            ┌──────────────────┼────────────┐ │
                  │            ▼                  ▼            ▼ │
-                 │        markdown.ts ──► better-sqlite3      │ │
+                 │        markdown.js ──► better-sqlite3      │ │
                  │        (shared dialect)  (SQLite + FTS5)   │ │
                  │                               │            │ │
                  └───────────────────────────────┼────────────┘ │
@@ -38,17 +38,17 @@ adapter that reads the session cookie, builds `ctx`, and forwards the response.
 
 | File | Responsibility |
 |---|---|
-| `db.ts` | SQLite connection, schema, migrations (versioned `schema_migrations` table), FTS5 setup |
-| `auth.ts` | argon2id hashing, HMAC-signed session cookies (httpOnly, SameSite=Lax), CSRF double-submit, password-reset tokens, API keys |
-| `permissions.ts` | Role ladder, `can(user, action, space)` checks — the single source of truth for access control |
-| `markdown.ts` | Markdown → HTML engine: GFM, wikilinks, callouts, math, task lists; shared by renderer, tests, and (future) editor preview |
-| `api.ts` | All endpoint handlers: spaces, pages, history, search, users, admin, activity |
-| `seed.ts` | First-run bootstrap: default space, welcome page |
+| `db.js` | SQLite connection, schema, migrations (versioned `schema_migrations` table), FTS5 setup |
+| `auth.js` | argon2id hashing, HMAC-signed session cookies (httpOnly, SameSite=Lax), CSRF double-submit, password-reset tokens, API keys |
+| `permissions.js` | Role ladder, `can(user, action, space)` checks — the single source of truth for access control |
+| `markdown.js` | Markdown → HTML engine: GFM, wikilinks, callouts, math, task lists; shared by renderer, tests, and (future) editor preview |
+| `api.js` | All endpoint handlers: spaces, pages, history, search, users, admin, activity |
+| `seed.js` | First-run bootstrap: default space, welcome page |
 
 ### `web/` — SvelteKit frontend
 
 - `src/routes/+server.js` under `/api/*`: thin adapters that parse the request, build
-  `ctx` via `server/auth.ts`, and return what `server/api.ts` produced.
+  `ctx` via `server/auth.js`, and return what `server/api.js` produced.
 - `src/routes/+layout.svelte`: shell (nav, auth state, toasts), Tailwind entry.
 - Page routes: `/` (space directory), `/[space]` (space overview + page tree),
   `/[space]/[...slug]` (viewer), `/edit/[space]/[...slug]` (editor),
@@ -82,7 +82,7 @@ Role ladder (higher wins, checked from the top):
 4. **viewer** (per space) — read.
 5. **anonymous** — read on `visibility='public'` spaces only.
 
-Rules, enforced in `can()` in `server/permissions.ts`:
+Rules, enforced in `can()` in `server/permissions.js`:
 
 - Reading a page requires read access to its space (or public visibility).
 - Editing requires editor+ in that space.
@@ -95,7 +95,7 @@ Every `/api` call re-checks permissions against the live DB row.
 
 ## Markdown dialect
 
-Implemented once in `server/markdown.ts` (shared by API and tests). See
+Implemented once in `server/markdown.js` (shared by API and tests). See
 [markdown.md](markdown.md). Rendering is server-side in the API (`/api/pages/.../render`),
 so the browser receives sanitized HTML — no client-side parser, no XSS surface from
 content.
@@ -116,5 +116,5 @@ SQLite is a single-writer store. This is *fine* for a wiki up to a few concurren
 editors (WAL mode + short transactions). Beyond that, the options are:
 
 1. Stick to one replica (recommended; a wiki's write volume is tiny).
-2. Replace `db.ts` with a Postgres-compatible driver (the query layer is isolated
+2. Replace `db.js` with a Postgres-compatible driver (the query layer is isolated
    there) and run a `pgbouncer` in front — not done, tracked in the roadmap.

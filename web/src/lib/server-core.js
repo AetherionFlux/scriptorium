@@ -71,16 +71,8 @@ export function resolveUser(request) {
  * SvelteKit RouteEvent; the shared table (server/routes.js) picks the handler.
  */
 export async function dispatchApi(event) {
-  // SvelteKit passes a RouteEvent: { request, url, params, locals, ... }
   const request = event.request;
-  const { db, secret, userStmt } = core();
-  const url = event.url;
-  const pathAfterApi = url.pathname.replace(/^\/api\//, '');
-  const m = match(request.method, pathAfterApi);
-  if (!m) return jsonResp(404, { error: 'Unknown endpoint.', code: 'NOT_FOUND' });
-
-  const { user, session, csrf } = resolveUser(request);
-
+  const pathAfterApi = event.url.pathname.replace(/^\/api\//, '');
   let body = {};
   if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
     try {
@@ -89,13 +81,27 @@ export async function dispatchApi(event) {
       return jsonResp(400, { error: 'Body must be valid JSON.', code: 'VALIDATION' });
     }
   }
+  const query = Object.fromEntries(event.url.searchParams);
+  return runApi(request.method, pathAfterApi, request, { body, query });
+}
 
+/**
+ * Core API pipeline: match the route table, resolve the user, enforce CSRF,
+ * run the handler → Response. Shared by dispatchApi and apiStatus so the two
+ * can never drift apart.
+ */
+async function runApi(method, pathAfterApi, request, { body = {}, query = {} }) {
+  const { db, secret } = core();
+  const m = match(method, pathAfterApi);
+  if (!m) return jsonResp(404, { error: 'Unknown endpoint.', code: 'NOT_FOUND' });
+
+  const { user, csrf } = resolveUser(request);
   const ctx = makeCtx({
     db, secret, user,
     csrf,
     csrfHeader: request.headers.get('x-csrf-token'),
     body,
-    query: Object.fromEntries(url.searchParams),
+    query,
     params: m.params
   });
 
@@ -105,9 +111,19 @@ export async function dispatchApi(event) {
     const r = toResponse(await m.handler(ctx));
     return jsonResp(r.status, r.body, r.headers);
   } catch (e) {
-    console.error('[scriptorium] handler error', request.method, pathAfterApi, e);
+    console.error('[scriptorium] handler error', method, pathAfterApi, e);
     return jsonResp(500, { error: 'Internal server error.', code: 'INTERNAL' });
   }
+}
+
+/**
+ * HTTP status the API would return for a GET of `pathAfterApi` on this
+ * request's user. Used by +page.server.js loaders so page routes propagate
+ * real 404/403 statuses instead of the 200 SPA shell.
+ */
+export async function apiStatus(pathAfterApi, event, query = {}) {
+  const res = await runApi('GET', pathAfterApi, event.request, { body: {}, query });
+  return res.status;
 }
 
 export function jsonResp(status, body, headers = {}) {

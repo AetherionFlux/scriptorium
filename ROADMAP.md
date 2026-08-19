@@ -1,6 +1,6 @@
 # Scriptorium — Roadmap
 
-A modern markdown wiki: SvelteKit 2 + Svelte 5 frontend, TypeScript backend, Tailwind CSS,
+A modern markdown wiki: SvelteKit 2 + Svelte 5 frontend, JavaScript (ESM, JSDoc-typed) backend, Tailwind CSS,
 SQLite persistence. Public spaces, private spaces, fine-grained permissions, in-browser
 editing with an Obsidian-flavored markdown dialect (callouts, wiki links), Docker image
 published to GHCR by GitHub Actions, and a Helm chart for Kubernetes.
@@ -24,7 +24,7 @@ Status legend: ✅ done · 🚧 in progress · ⬜ planned
 - [x] Permissions engine: role ladder `viewer < editor < maintainer < admin`;
       public read on public spaces; owner/maintainer grants; admin bypass;
       granular permission checks for every endpoint
-- [x] Markdown dialect engine (shared `server/markdown.ts`): GFM + wikilinks
+- [x] Markdown dialect engine (shared `server/markdown.js`): GFM + wikilinks
       `[[Page]]` / `[[space/Page]]`, Obsidian callouts (note, tip, info, warning,
       caution, danger, quote, example, failure, question, abstract, custom `> [!x]`),
       math (katex), task lists, highlight, footnotes, tables
@@ -46,7 +46,8 @@ Status legend: ✅ done · 🚧 in progress · ⬜ planned
       private-space locking, per-user access panel
 - [x] Auth screens: login, registration (open when no admin exists), password reset
 - [x] Admin dashboard: stats, user management, activity feed
-- [x] Search results page, 404 / 403 / 410 handling, responsive layout
+- [x] Search-as-you-type (top-nav dropdown over FTS5 results); real HTTP
+      404/403 statuses on missing/forbidden pages (410 deferred to v1.x)
 - [x] `svelte-check` clean (0 errors / 0 warnings), production build verified,
       live end-to-end smoke test via HTTP
 
@@ -63,7 +64,8 @@ Status legend: ✅ done · 🚧 in progress · ⬜ planned
 
 ## Phase 4 — Hardening (next)
 
-- [x] Branch-per-phase workflow, all PRs merged to `main`
+- [x] Phased delivery (foundations → backend → frontend → packaging), each phase
+      committed and CI-verified on `main`
 - [ ] Rate limiting on auth endpoints (login, register, reset)
 - [ ] Optional OIDC / SAML federation for SSO
 - [ ] Import / export: bulk JSON export per space, import from Markdown folders
@@ -83,6 +85,6 @@ Status legend: ✅ done · 🚧 in progress · ⬜ planned
 2. **Frontend never trusts itself** — every permission check happens server-side; the
    UI only mirrors what the API grants.
 3. **The markdown dialect is a shared module** — editor, renderer, and tests all consume
-   one `server/markdown.ts`, so WYSIWYG drift is impossible by construction.
+   one `server/markdown.js`, so WYSIWYG drift is impossible by construction.
 4. **Deploy anywhere** — `docker run -v data:/data -p 8787:8787 ghcr.io/...` must work
    with zero configuration; Helm covers the rest.

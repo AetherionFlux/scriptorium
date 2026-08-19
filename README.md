@@ -26,6 +26,18 @@ notes tool rather than a CMS.
 - **Deployment** — single-port Docker image (GHCR) + Helm chart. SQLite storage in a
   data directory; no external database required.
 
+## Screenshots
+
+All pages are server-rendered markdown — callouts, tables, math, wiki links — with a CodeMirror 6 editor and split preview.
+
+| Space & page tree | Markdown dialect (12 callout types, math, wikilinks) | In-browser editor (split view) |
+|---|---|---|
+| ![Space overview](docs/screenshots/01-space-overview.png) | ![Markdown guide](docs/screenshots/03-markdown-guide.png) | ![Editor](docs/screenshots/04-editor.png) |
+
+| Search | Admin dashboard | A wiki page (callouts, table, KaTeX) |
+|---|---|---|
+| ![Search](docs/screenshots/06-search.png) | ![Admin](docs/screenshots/05-admin.png) | ![Page](docs/screenshots/02-welcome-page.png) |
+
 ## Quick start (Docker)
 
 ```bash
