@@ -41,7 +41,7 @@ jobs:
       - name: Smoke boot of built server
         run: |
           set -e
-          PORT=8787 (node web/build/index.js &)
+          PORT=8787 node web/build/index.js &
           for i in $(seq 1 30); do
             sleep 1
             code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8787/api/health || true)
