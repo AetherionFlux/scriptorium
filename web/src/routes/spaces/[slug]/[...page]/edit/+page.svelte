@@ -133,7 +133,9 @@
     window.addEventListener('beforeunload', onBeforeUnload);
     refreshPreview();
   });
-  onDestroy(() => window.removeEventListener('beforeunload', onBeforeUnload));
+  onDestroy(() => {
+    if (typeof window !== 'undefined') window.removeEventListener('beforeunload', onBeforeUnload);
+  });
 
   const templates = $derived([
     { label: '⚠ warning', title: 'Insert a warning callout', text: '\n> [!warning]\n> \n' },

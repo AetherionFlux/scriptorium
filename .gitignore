@@ -6,6 +6,7 @@ dist/
 
 # data
 data/
+data-screenshots/
 *.db
 *.db-wal
 *.db-shm
@@ -18,4 +19,4 @@ data/
 .DS_Store
 *.log
 .idea/
-.vscode/
+.vscode/seed_screenshots.py
