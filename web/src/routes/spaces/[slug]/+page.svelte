@@ -89,10 +89,10 @@
         {/if}
         {#if isMaintainer}
           <div class="ml-auto flex gap-2">
-            <button class="btn-ghost !text-xs" onclick={() => { showSettings = !showSettings; showMembers = false; }}>
+            <button class="btn btn-ghost btn-sm" onclick={() => { showSettings = !showSettings; showMembers = false; }}>
               Settings
             </button>
-            <button class="btn-ghost !text-xs" onclick={() => { showMembers = !showMembers; showSettings = false; }}>
+            <button class="btn btn-ghost btn-sm" onclick={() => { showMembers = !showMembers; showSettings = false; }}>
               Members
             </button>
           </div>
@@ -111,7 +111,7 @@
           <div class="text-4xl mb-3">🪶</div>
           <div class="text-parchment font-medium mb-1">An empty space</div>
           <div class="text-sm text-parchment-dim mb-4">Create a page to get started.</div>
-          <a class="btn-primary" href="/spaces/{slug}/new">Create the first page</a>
+          <a class="btn btn-primary" href="/spaces/{slug}/new">Create the first page</a>
         </div>
       {/if}
     </div>

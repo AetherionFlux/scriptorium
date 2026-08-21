@@ -76,7 +76,7 @@
     <div>
             <input aria-label="Account email" class="input" type="email" bind:value={email} required />
     </div>
-    <button class="btn-primary w-full justify-center" disabled={busy || !email.includes('@')}>
+    <button class="btn btn-primary w-full" disabled={busy || !email.includes('@')}>
       Issue reset token
     </button>
   </form>
@@ -90,7 +90,7 @@
       <div>
                 <input aria-label="New password (min 8 chars)" class="input" type="password" bind:value={newPassword} required minlength="8" />
       </div>
-      <button class="btn-primary w-full justify-center" disabled={busy || newPassword.length < 8}>
+      <button class="btn btn-primary w-full" disabled={busy || newPassword.length < 8}>
         Set new password
       </button>
     </form>

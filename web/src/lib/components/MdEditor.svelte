@@ -93,7 +93,7 @@
   {#if templates.length}
     <div class="flex flex-wrap gap-1.5 border-b border-ink-700 px-2 py-1.5 bg-ink-900">
       {#each templates as t (t.label)}
-        <button class="btn-ghost !px-2 !py-0.5 !text-xs" title={t.title} onclick={() => insert(t.text)}>
+        <button class="btn btn-ghost btn-sm" title={t.title} onclick={() => insert(t.text)}>
           {t.label}
         </button>
       {/each}

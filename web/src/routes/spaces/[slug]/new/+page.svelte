@@ -82,8 +82,8 @@
       <div class="text-sm text-red-400">{error}</div>
     {/if}
     <div class="flex justify-end gap-2">
-      <a class="btn-ghost" href="/spaces/{slug}">Cancel</a>
-      <button class="btn-primary" disabled={busy || !title.trim()} onclick={create}>
+      <a class="btn btn-ghost" href="/spaces/{slug}">Cancel</a>
+      <button class="btn btn-primary" disabled={busy || !title.trim()} onclick={create}>
         {busy ? 'Creating…' : 'Create page'}
       </button>
     </div>

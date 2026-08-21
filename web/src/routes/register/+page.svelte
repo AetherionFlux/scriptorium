@@ -69,7 +69,7 @@
     {#if error}
       <div class="text-sm text-red-400">{error}</div>
     {/if}
-    <button class="btn-primary w-full justify-center" disabled={busy || !strong}>
+    <button class="btn btn-primary w-full" disabled={busy || !strong}>
       {busy ? 'Creating account…' : 'Create account'}
     </button>
     <div class="text-center text-xs text-parchment-faint">

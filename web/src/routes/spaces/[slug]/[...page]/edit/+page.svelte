@@ -193,8 +193,8 @@
       </div>
 
       <span class="text-xs {dirty ? 'text-ember-400' : 'text-parchment-faint'}">{statusText}</span>
-      <button class="btn-primary !text-xs" disabled={!dirty || !canEdit} onclick={save}>Save</button>
-      <a class="btn-ghost !text-xs" href="/spaces/{slug}/{pageSlug}">View</a>
+      <button class="btn btn-primary btn-sm" disabled={!dirty || !canEdit} onclick={save}>Save</button>
+      <a class="btn btn-ghost btn-sm" href="/spaces/{slug}/{pageSlug}">View</a>
     </div>
 
     {#if error}

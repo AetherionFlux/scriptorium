@@ -38,7 +38,7 @@
       </p>
     </div>
     {#if page.data.user}
-      <button class="btn-primary" onclick={openNewSpace}>+ New space</button>
+      <button class="btn btn-primary" onclick={openNewSpace}>+ New space</button>
     {:else}
       <span class="text-xs text-parchment-faint">Sign in to create spaces</span>
     {/if}
@@ -54,7 +54,7 @@
       <div class="text-parchment font-medium mb-1">No spaces yet</div>
       <div class="text-sm text-parchment-dim mb-4">Create the first one to start writing.</div>
       {#if page.data.user}
-        <button class="btn-primary" onclick={openNewSpace}>Create a space</button>
+        <button class="btn btn-primary" onclick={openNewSpace}>Create a space</button>
       {/if}
     </div>
   {:else}

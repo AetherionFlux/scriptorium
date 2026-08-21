@@ -28,6 +28,6 @@
   <h1 class="text-xl font-bold text-parchment">{heading}</h1>
   <p class="text-sm text-parchment-dim mt-2">{@html msg}</p>
   <div class="mt-6">
-    <a href="/" class="btn-primary">Back to spaces</a>
+    <a href="/" class="btn btn-primary">Back to spaces</a>
   </div>
 </div>

@@ -133,16 +133,16 @@
     <div class="text-parchment font-medium mb-1">Page not found</div>
     <div class="text-sm text-parchment-dim mb-4">{error}</div>
     {#if canRestore}
-      <button class="btn-ghost" onclick={restoreDeleted}>Restore deleted page</button>
+      <button class="btn btn-ghost" onclick={restoreDeleted}>Restore deleted page</button>
     {/if}
-    <a class="btn-primary" href="/spaces/{slug}">Back to space</a>
+    <a class="btn btn-primary" href="/spaces/{slug}">Back to space</a>
   </div>
 {:else if status === 403}
   <div class="card p-8 text-center max-w-xl mx-auto">
     <div class="text-4xl mb-3">🔒</div>
     <div class="text-parchment font-medium mb-1">No access</div>
     <div class="text-sm text-parchment-dim mb-4">{error}</div>
-    <a class="btn-primary" href="/spaces/{slug}">Back to space</a>
+    <a class="btn btn-primary" href="/spaces/{slug}">Back to space</a>
   </div>
 {:else if meta === null}
   <div class="text-parchment-faint">Loading…</div>
@@ -165,13 +165,13 @@
     <div class="flex flex-wrap items-center gap-2 mb-6">
       <h1 class="text-2xl font-bold text-parchment flex-1">{meta.title}</h1>
       {#if canEdit}
-        <a class="btn-primary !text-xs" href="/spaces/{slug}/{pageSlug}/edit">Edit</a>
+        <a class="btn btn-primary btn-sm" href="/spaces/{slug}/{pageSlug}/edit">Edit</a>
       {/if}
       {#if canEdit || canRestore}
-        <button class="btn-ghost !text-xs" onclick={openHistory}>History</button>
+        <button class="btn btn-ghost btn-sm" onclick={openHistory}>History</button>
       {/if}
       {#if canRestore || meta.created_by === page.data.user?.id}
-        <button class="btn-danger !text-xs" onclick={del}>Delete</button>
+        <button class="btn btn-danger btn-sm" onclick={del}>Delete</button>
       {/if}
     </div>
 
@@ -211,9 +211,9 @@
           <div class="flex items-center gap-3 py-2 border-b border-ink-800">
             <span class="badge-role shrink-0">rev {h.rev}</span>
             <span class="text-sm text-parchment-dim flex-1 truncate">{h.author ?? 'system'} — {h.created_at}</span>
-            <button class="btn-ghost !text-xs" onclick={() => viewRev(h.rev)}>view</button>
+            <button class="btn btn-ghost btn-sm" onclick={() => viewRev(h.rev)}>view</button>
             {#if canEdit}
-              <button class="btn-primary !text-xs" onclick={() => restoreRev(h.rev)}>restore</button>
+              <button class="btn btn-primary btn-sm" onclick={() => restoreRev(h.rev)}>restore</button>
             {/if}
           </div>
         {:else}
@@ -228,7 +228,7 @@
           </div>
         {/if}
         <div class="flex justify-end mt-4">
-          <button class="btn-ghost" onclick={() => { showHistory = false; selectedRev = null; }}>Close</button>
+          <button class="btn btn-ghost" onclick={() => { showHistory = false; selectedRev = null; }}>Close</button>
         </div>
       </div>
     </div>

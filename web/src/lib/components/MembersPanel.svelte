@@ -73,7 +73,7 @@
         <option value="maintainer">maintainer</option>
       </select>
     </div>
-    <button class="btn-primary" disabled={busy || !invite.email.includes('@')} onclick={add}>Add</button>
+    <button class="btn btn-primary" disabled={busy || !invite.email.includes('@')} onclick={add}>Add</button>
   </div>
 
   {#if error}

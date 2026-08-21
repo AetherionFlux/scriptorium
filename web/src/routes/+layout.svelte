@@ -108,7 +108,7 @@
       <!-- space switcher -->
       <div class="relative hidden sm:block">
         <button
-          class="btn-ghost !py-1"
+          class="btn btn-ghost btn-sm"
           onclick={() => {
             showSpaces = !showSpaces;
             showUserMenu = false;
@@ -131,7 +131,7 @@
             {:else}
               <div class="px-2 py-2 text-sm text-parchment-faint">No spaces yet.</div>
             {/each}
-            <button class="btn-primary w-full justify-center mt-1" onclick={openNewSpace}>
+            <button class="btn btn-primary w-full mt-1" onclick={openNewSpace}>
               + New space
             </button>
           </div>
@@ -162,13 +162,13 @@
       <div class="flex items-center gap-2">
         {#if data.user}
           {#if currentSpace}
-            <a href="/spaces/{currentSpace}/new" class="btn-primary !py-1">+ Page</a>
+            <a href="/spaces/{currentSpace}/new" class="btn btn-primary btn-sm">+ Page</a>
           {/if}
           {#if data.user.role === 'admin'}
-            <a href="/admin" class="btn-ghost !py-1">Admin</a>
+            <a href="/admin" class="btn btn-ghost btn-sm">Admin</a>
           {/if}
           <div class="relative">
-            <button class="btn-ghost !py-1" onclick={() => {
+            <button class="btn btn-ghost btn-sm" onclick={() => {
               showUserMenu = !showUserMenu;
               showSpaces = false;
             }}>
@@ -189,8 +189,8 @@
             {/if}
           </div>
         {:else}
-          <a href="/login" class="btn-ghost !py-1">Sign in</a>
-          <a href="/register" class="btn-primary !py-1">Join</a>
+          <a href="/login" class="btn btn-ghost btn-sm">Sign in</a>
+          <a href="/register" class="btn btn-primary btn-sm">Join</a>
         {/if}
       </div>
     </div>
@@ -255,8 +255,8 @@
             <div class="text-sm text-red-400">{nsError}</div>
           {/if}
           <div class="flex justify-end gap-2 pt-2">
-            <button class="btn-ghost" onclick={() => (showNewSpace = false)}>Cancel</button>
-            <button class="btn-primary" disabled={nsBusy || ns.name.trim().length < 2} onclick={createSpace}>
+            <button class="btn btn-ghost" onclick={() => (showNewSpace = false)}>Cancel</button>
+            <button class="btn btn-primary" disabled={nsBusy || ns.name.trim().length < 2} onclick={createSpace}>
               {nsBusy ? 'Creating…' : 'Create space'}
             </button>
           </div>

@@ -54,7 +54,7 @@
     {#if error}
       <div class="text-sm text-red-400">{error}</div>
     {/if}
-    <button class="btn-primary w-full justify-center" disabled={busy}>
+    <button class="btn btn-primary w-full" disabled={busy}>
       {busy ? 'Signing in…' : 'Sign in'}
     </button>
     <div class="text-center text-xs text-parchment-faint">

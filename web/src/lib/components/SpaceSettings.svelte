@@ -82,8 +82,8 @@ $effect(() => {
       <div class="text-sm text-red-400">{error}</div>
     {/if}
     <div class="flex items-center justify-between pt-2">
-      <button class="btn-danger" onclick={del}>Delete space…</button>
-      <button class="btn-primary" disabled={busy} onclick={save}>{busy ? 'Saving…' : 'Save'}</button>
+      <button class="btn btn-danger" onclick={del}>Delete space…</button>
+      <button class="btn btn-primary" disabled={busy} onclick={save}>{busy ? 'Saving…' : 'Save'}</button>
     </div>
   </div>
 </div>

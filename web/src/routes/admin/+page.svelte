@@ -123,8 +123,8 @@
     </div>
 
     <div class="flex gap-2 mb-4">
-      <button class="btn-ghost !text-xs {tab === 'users' ? '!border-ember-600 !text-parchment' : ''}" onclick={() => (tab = 'users')}>Users</button>
-      <button class="btn-ghost !text-xs {tab === 'activity' ? '!border-ember-600 !text-parchment' : ''}" onclick={() => (tab = 'activity')}>Activity</button>
+      <button class="btn btn-ghost btn-sm {tab === 'users' ? 'btn-active' : ''}" onclick={() => (tab = 'users')}>Users</button>
+      <button class="btn btn-ghost btn-sm {tab === 'activity' ? 'btn-active' : ''}" onclick={() => (tab = 'activity')}>Activity</button>
     </div>
 
     {#if tab === 'users'}
@@ -144,7 +144,7 @@
             <option value="admin">admin</option>
           </select>
         </div>
-        <button class="btn-primary" disabled={busy || !nu.email.includes('@') || nu.password.length < 8} onclick={createUser}>
+        <button class="btn btn-primary btn-sm" disabled={busy || !nu.email.includes('@') || nu.password.length < 8} onclick={createUser}>
           Create user
         </button>
       </div>
