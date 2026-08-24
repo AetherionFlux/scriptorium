@@ -22,4 +22,5 @@ data-screenshots/
 .vscode/
 seed_screenshots.py
 data-prod/
-data.bak.*/data-audit/
+data.bak.*/
+data-audit/
